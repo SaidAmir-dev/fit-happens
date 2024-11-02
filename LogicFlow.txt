@@ -1,0 +1,24 @@
+Logic Flow
+
+1.User Registration with Reference Number:
+  -The user receives a unique reference number when entering the store.
+  -This reference number will create a unique session to track the user's activity.
+
+2.Scanning Clothes:
+  -As the user goes through the store, they scan clothes they want to try on.
+  -Each scan adds an item to the user’s session/cart.
+
+3.Entering the Fitting Room and Starting the Website Session:
+  -The user enters the fitting room and accesses the website on an iPad.
+  -They input their reference number, which retrieves their session and list of scanned items.
+
+4.3D Model Capture:
+  -The user rotates in front of the iPad to capture 3D images.
+  -These images are processed to create a 3D model of the user.
+
+5.Display 3D Model and Scanned Items:
+  -The website displays the 3D model on the left.
+  -On the right, it shows the list of clothes the user scanned.
+
+6.Virtual Try-On:
+  -The user selects clothing items from the list to virtually try on their 3D model.

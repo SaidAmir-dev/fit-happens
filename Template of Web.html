@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Virtual Fitting Room</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f9;
+        }
+        #container {
+            display: flex;
+            justify-content: space-around;
+            width: 80%;
+            max-width: 1200px;
+            margin-top: 20px;
+        }
+        #model, #cart {
+            flex: 1;
+            margin: 10px;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        #model {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        #cart {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        .cart-item {
+            margin: 10px 0;
+            padding: 8px;
+            border-bottom: 1px solid #ddd;
+        }
+    </style>
+</head>
+<body>
+    <h1>Virtual Fitting Room</h1>
+
+    <!-- Reference Number Entry -->
+    <div id="refNumberInput">
+        <label for="refNumber">Enter your reference number:</label>
+        <input type="text" id="refNumber" placeholder="Enter ref number">
+        <button onclick="startSession()">Start Session</button>
+    </div>
+
+    <!-- Main Content -->
+    <div id="container" style="display: none;">
+        <!-- 3D Model Display Area -->
+        <div id="model">
+            <h2>Your 3D Model</h2>
+            <div id="modelDisplay"> <!-- Placeholder for 3D model -->
+                <p>[3D model will appear here]</p>
+            </div>
+            <button onclick="capture3DModel()">Capture 3D Model</button>
+        </div>
+
+        <!-- Cart with Scanned Items -->
+        <div id="cart">
+            <h2>Your Scanned Items</h2>
+            <div id="cartList"> <!-- Placeholder for items list -->
+                <p>No items scanned yet.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Mock function to start the session
+        function startSession() {
+            const refNumber = document.getElementById('refNumber').value;
+            if (refNumber) {
+                document.getElementById('refNumberInput').style.display = 'none';
+                document.getElementById('container').style.display = 'flex';
+                loadCartItems();
+            } else {
+                alert('Please enter your reference number.');
+            }
+        }
+
+        // Mock function to load scanned items into cart
+        function loadCartItems() {
+            // Replace with logic to fetch items based on ref number
+            const cartList = document.getElementById('cartList');
+            cartList.innerHTML = `
+                <div class="cart-item">Item 1</div>
+                <div class="cart-item">Item 2</div>
+                <div class="cart-item">Item 3</div>
+            `;
+        }
+
+        // Mock function for capturing 3D model
+        function capture3DModel() {
+            const modelDisplay = document.getElementById('modelDisplay');
+            modelDisplay.innerHTML = '<p>[3D model captured]</p>';
+            // Replace with actual 3D capture functionality
+        }
+    </script>
+</body>
+</html>
