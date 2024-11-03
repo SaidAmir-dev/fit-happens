@@ -121,17 +121,28 @@ function updateText() {
     document.getElementById("loadingMessage").innerText = translations[currentLanguage].loadingMessage;
     document.getElementById("modelTitle").innerText = translations[currentLanguage].modelTitle;
     document.getElementById("cartTitle").innerText = translations[currentLanguage].cartTitle;
-    document.getElementById("captureModelButton").innerText = translations[currentLanguage].captureModelButton;
-    document.getElementById("finishSessionButton").innerText = translations[currentLanguage].finishSessionButton;
-    document.getElementById("takePhotoButton").innerText = translations[currentLanguage].takePhotoButton;
+    //document.getElementById("captureModelButton").innerText = translations[currentLanguage].captureModelButton;
+    //document.getElementById("finishSessionButton").innerText = translations[currentLanguage].finishSessionButton;
+    //document.getElementById("takePhotoButton").innerText = translations[currentLanguage].takePhotoButton;
+    const finishSessionButton = document.getElementById("finishSessionButton");
+    if (finishSessionButton) {
+        finishSessionButton.innerText = translations[currentLanguage].finishSessionButton;
+    }
+    // Update 'Take Photo' button if it exists
+    const takePhotoButton = document.getElementById("takePhotoButton");
+    if (takePhotoButton) {
+        takePhotoButton.innerText = translations[currentLanguage].takePhotoButton;
+    }
+
 }
 
 async function startSession() {
-    const refNumber = document.getElementById('refNumber').value;
-    if (refNumber.length === 4) {
+    refNumber = document.getElementById('refNumber').value;
+    if (/^\d{4}$/.test(refNumber)) {
         document.getElementById('refNumberInput').style.display = 'none';
         document.getElementById('cameraPermission').style.display = 'flex';
         await initializeCamera();
+        updateText();
     } else {
         alert("Please enter a valid 4-digit reference number.");
     }
@@ -152,9 +163,15 @@ function captureFace() {
     document.getElementById('cameraPermission').style.display = 'none';
     document.getElementById('loadingScreen').style.display = 'block';
 
+    if (videoStream) {
+        videoStream.getTracks().forEach(track => track.stop());
+    }
     setTimeout(() => {
         document.getElementById('loadingScreen').style.display = 'none';
         document.getElementById('container').style.display = 'contents';
+        init3DModel();
+        loadCartItems(refNumber);
+        updateText();
     }, 3000);
 }
 
@@ -164,6 +181,32 @@ function capture3DModel() {
 
 function finishSession() {
     alert(translations[currentLanguage].finishSessionMessage);
+
+    // Hide the main container and show the reference number input
+    document.getElementById('container').style.display = 'none';
+    document.getElementById('refNumberInput').style.display = 'flex';
+
+    // Reset the reference number input
+    document.getElementById('refNumber').value = '';
+
+    // Clear cart items
+    document.getElementById('cartItems').innerHTML = '<p>No items scanned yet.</p>';
+
+    // Reset the 3D model scene
+    if (renderer && scene) {
+        renderer.dispose();
+        scene = null;
+        renderer = null;
+        camera = null;
+    }
+
+    // Reset other variables if necessary
+    // For example, reset clothing models visibility
+    clothingModels = {};
+    modelGroup = new THREE.Group();
+
+    // Optionally reinitialize the language settings
+    updateText();
 }
 
 
