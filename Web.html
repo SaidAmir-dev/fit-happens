@@ -54,13 +54,55 @@
 
         // Function to load scanned items into cart
         function loadCartItems(refNumber) {
-            // Placeholder for loading logic; replace with API call if needed
+            // Sample items; replace with actual data loading logic if needed
+            const items = [
+                { name: "T-Shirt - Size M", id: "item1" },
+                { name: "Jeans - Size 32", id: "item2" },
+                { name: "Hat - One Size", id: "item3" }
+            ];
+
             const cartItems = document.getElementById('cartItems');
-            cartItems.innerHTML = `
-                <div class="cart-item">T-Shirt - Size M</div>
-                <div class="cart-item">Jeans - Size 32</div>
-                <div class="cart-item">Hat - One Size</div>
-            `;
+            cartItems.innerHTML = ''; // Clear previous items
+
+            // Populate cart items with checkboxes
+            items.forEach(item => {
+                const itemDiv = document.createElement('div');
+                itemDiv.classList.add('cart-item');
+
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.id = item.id;
+                checkbox.value = item.name;
+                checkbox.onchange = () => toggleItemOnModel(item.name, checkbox.checked);
+
+                const label = document.createElement('label');
+                label.htmlFor = item.id;
+                label.innerText = item.name;
+
+                itemDiv.appendChild(checkbox);
+                itemDiv.appendChild(label);
+                cartItems.appendChild(itemDiv);
+            });
+        }
+
+        // Function to toggle items on the 3D model display
+        function toggleItemOnModel(itemName, isChecked) {
+            const modelDisplay = document.getElementById('modelDisplay');
+            let currentModelItems = modelDisplay.getElementsByClassName('model-item');
+
+            // Check if item is already on the model
+            let itemOnModel = Array.from(currentModelItems).find(el => el.innerText === itemName);
+
+            if (isChecked && !itemOnModel) {
+                // Add item to model if checkbox is checked and item is not already displayed
+                const newItem = document.createElement('div');
+                newItem.classList.add('model-item');
+                newItem.innerText = itemName;
+                modelDisplay.appendChild(newItem);
+            } else if (!isChecked && itemOnModel) {
+                // Remove item if checkbox is unchecked
+                itemOnModel.remove();
+            }
         }
 
         // Function for capturing 3D model
