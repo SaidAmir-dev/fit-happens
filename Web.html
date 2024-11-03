@@ -5,15 +5,65 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fit-Happens Virtual Fitting Room</title>
     <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #ffffff;
+        }
+        #refNumberInput {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+        h1 {
+            font-size: 3em;
+            margin-bottom: 20px;
+        }
+        label {
+            font-size: 1.5em;
+            margin-bottom: 10px;
+        }
+        input[type="text"] {
+            width: 200px;
+            height: 40px;
+            font-size: 1.2em;
+            text-align: center;
+            border: 2px solid #000;
+            border-radius: 25px;
+            outline: none;
+            margin-bottom: 20px;
+        }
+        button {
+            width: 50px;
+            height: 50px;
+            border: none;
+            border-radius: 50%;
+            background-color: #ccc;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.5em;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #aaa;
+        }
+    </style>
 </head>
 <body>
-    <h1>Fit-Happens Virtual Fitting Room</h1>
-
     <!-- Reference Number Entry -->
     <div id="refNumberInput">
-        <label for="refNumber">Enter your reference number:</label>
+        <h1>Hello</h1>
+        <label for="refNumber">Enter reference number:</label>
         <input type="text" id="refNumber" placeholder="0000" maxlength="4" pattern="\d{4}" required>
-        <button onclick="startSession()">Start Session</button>
+        <button onclick="startSession()">↻</button>
     </div>
 
     <!-- Main Content -->
