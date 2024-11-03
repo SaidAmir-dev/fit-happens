@@ -8,14 +8,48 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
+    <style>
+        /* Loading spinner */
+        .loading-spinner {
+            margin: 20px auto;
+            width: 50px;
+            height: 50px;
+            border: 8px solid rgba(255, 255, 255, 0.3);
+            border-top-color: black;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Styling for the arrow button */
+        #refNumberInput button {
+            font-size: 1.5em;
+            cursor: pointer;
+            background-color: black;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #refNumberInput button:hover {
+            background-color: #333; /* Darker black on hover */
+        }
+    </style>
 </head>
 <body>
     <!-- Reference Number Entry -->
     <div id="refNumberInput">
-        <h1>Hello</h1>
+        <h1>Hello!</h1>
         <label for="refNumber">Enter reference number:</label>
         <input type="text" id="refNumber" placeholder="0000" maxlength="4" pattern="\d{4}" required>
-        <button onclick="startSession()">↻</button>
+        <button onclick="startSession()">→</button>
     </div>
 
     <!-- Camera Permission and Face Capture -->
@@ -24,6 +58,12 @@
         <p>Please position your face in front of the camera.</p>
         <video id="cameraFeed" autoplay playsinline></video>
         <button onclick="captureFace()">Capture Face</button>
+    </div>
+
+    <!-- Loading Screen -->
+    <div id="loadingScreen" style="display: none;">
+        <h2>Please stand still, you are being scanned by LiDAR scanners...</h2>
+        <div class="loading-spinner"></div> <!-- Loading spinner -->
     </div>
 
     <!-- Main Content -->
@@ -88,12 +128,18 @@
                 videoStream.getTracks().forEach(track => track.stop());
             }
 
-            // Hide the camera permission section and show the main content
+            // Hide the camera permission section and show the loading screen
             document.getElementById('cameraPermission').style.display = 'none';
-            document.getElementById('container').style.display = 'flex';
+            document.getElementById('loadingScreen').style.display = 'block';
 
-            // Load items into the cart
-            loadCartItems();
+            // Show loading screen for 5 seconds before proceeding
+            setTimeout(() => {
+                document.getElementById('loadingScreen').style.display = 'none';
+                document.getElementById('container').style.display = 'flex';
+
+                // Load items into the cart
+                loadCartItems();
+            }, 5000);
         }
 
         // Function to load scanned items into cart
@@ -160,4 +206,3 @@
     </script>
 </body>
 </html>
-
