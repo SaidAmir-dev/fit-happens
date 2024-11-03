@@ -12,7 +12,7 @@
     <!-- Reference Number Entry -->
     <div id="refNumberInput">
         <label for="refNumber">Enter your reference number:</label>
-        <input type="text" id="refNumber" placeholder="Enter reference number" maxlength="6">
+        <input type="text" id="refNumber" placeholder="0000" maxlength="4" pattern="\d{4}" required>
         <button onclick="startSession()">Start Session</button>
     </div>
 
@@ -41,12 +41,12 @@
         // Function to start the session
         function startSession() {
             const refNumber = document.getElementById('refNumber').value;
-            if (refNumber) {
+            if (/^\d{4}$/.test(refNumber)) {
                 document.getElementById('refNumberInput').style.display = 'none';
                 document.getElementById('container').style.display = 'flex';
                 loadCartItems(refNumber);
             } else {
-                alert('Please enter a valid reference number.');
+                alert('Please enter a valid 4-digit reference number.');
             }
         }
 
