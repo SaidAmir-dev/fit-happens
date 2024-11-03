@@ -18,6 +18,14 @@
         <button onclick="startSession()">↻</button>
     </div>
 
+    <!-- Camera Permission and Face Capture -->
+    <div id="cameraPermission" style="display: none;">
+        <h2>Face Scan Required</h2>
+        <p>Please position your face in front of the camera.</p>
+        <video id="cameraFeed" autoplay playsinline></video>
+        <button onclick="captureFace()">Capture Face</button>
+    </div>
+
     <!-- Main Content -->
     <div id="container" style="display: none;">
         <!-- 3D Model Display Area -->
@@ -40,21 +48,56 @@
     </div>
 
     <script>
+        let videoStream;
+
         // Function to start the session
         function startSession() {
             const refNumber = document.getElementById('refNumber').value;
             if (/^\d{4}$/.test(refNumber)) {
                 document.getElementById('refNumberInput').style.display = 'none';
-                document.getElementById('container').style.display = 'flex';
-                loadCartItems(refNumber);
+                requestCameraPermission();
             } else {
                 alert('Please enter a valid 4-digit reference number.');
             }
         }
 
+        // Request camera permission and display the video feed
+        function requestCameraPermission() {
+            const cameraPermissionDiv = document.getElementById('cameraPermission');
+            const cameraFeed = document.getElementById('cameraFeed');
+
+            // Show the camera permission window
+            cameraPermissionDiv.style.display = 'block';
+
+            // Request video stream from the camera
+            navigator.mediaDevices.getUserMedia({ video: true })
+                .then(stream => {
+                    videoStream = stream;
+                    cameraFeed.srcObject = stream;
+                })
+                .catch(error => {
+                    alert('Camera access is required for face scanning.');
+                    console.error('Error accessing camera:', error);
+                });
+        }
+
+        // Capture face and proceed to fitting room
+        function captureFace() {
+            // Stop the video stream after capturing
+            if (videoStream) {
+                videoStream.getTracks().forEach(track => track.stop());
+            }
+
+            // Hide the camera permission section and show the main content
+            document.getElementById('cameraPermission').style.display = 'none';
+            document.getElementById('container').style.display = 'flex';
+
+            // Load items into the cart
+            loadCartItems();
+        }
+
         // Function to load scanned items into cart
-        function loadCartItems(refNumber) {
-            // Sample items; replace with actual data loading logic if needed
+        function loadCartItems() {
             const items = [
                 { name: "T-Shirt - Size M", id: "item1" },
                 { name: "Jeans - Size 32", id: "item2" },
@@ -64,7 +107,6 @@
             const cartItems = document.getElementById('cartItems');
             cartItems.innerHTML = ''; // Clear previous items
 
-            // Populate cart items with checkboxes
             items.forEach(item => {
                 const itemDiv = document.createElement('div');
                 itemDiv.classList.add('cart-item');
@@ -90,17 +132,14 @@
             const modelDisplay = document.getElementById('modelDisplay');
             let currentModelItems = modelDisplay.getElementsByClassName('model-item');
 
-            // Check if item is already on the model
             let itemOnModel = Array.from(currentModelItems).find(el => el.innerText === itemName);
 
             if (isChecked && !itemOnModel) {
-                // Add item to model if checkbox is checked and item is not already displayed
                 const newItem = document.createElement('div');
                 newItem.classList.add('model-item');
                 newItem.innerText = itemName;
                 modelDisplay.appendChild(newItem);
             } else if (!isChecked && itemOnModel) {
-                // Remove item if checkbox is unchecked
                 itemOnModel.remove();
             }
         }
@@ -109,7 +148,6 @@
         function capture3DModel() {
             const modelDisplay = document.getElementById('modelDisplay');
             modelDisplay.innerHTML = '<p>[3D model captured]</p>';
-            // Replace with actual 3D capture functionality
         }
 
         // Function to finish session
@@ -122,3 +160,4 @@
     </script>
 </body>
 </html>
+
