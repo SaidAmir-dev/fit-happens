@@ -1,89 +1,118 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Fit-Happens Virtual Fitting Room</title>
-    <link rel="stylesheet" href="styles.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap"
+      rel="stylesheet"
+    />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-</head>
-<body>
-    <div id="backButton" onclick="goBack()">
-        ←
+  </head>
+  <body>
+    <div id="backButton" onclick="goBack()">←</div>
+
+    <!-- Logo -->
+    <div id="logoContainer">
+      <img src="data/img/logo.png" alt="Fit-Happens Logo" id="logo" />
     </div>
+
     <!-- Language Selector -->
     <div id="languageSelector">
-        <select onchange="changeLanguage(event)">
-            <option value="en" class="flag-option">
-                <img src="https://restcountries.com/data/usa.svg" alt="US Flag"> English
-            </option>
-            <option value="es" class="flag-option">
-                <img src="https://restcountries.com/data/esp.svg" alt="Spain Flag"> Español
-            </option>
-            <option value="fr" class="flag-option">
-                <img src="https://restcountries.com/data/fra.svg" alt="France Flag"> Français
-            </option>
-            <option value="zh" class="flag-option">
-                <img src="https://restcountries.com/data/chn.svg" alt="China Flag"> 中文
-            </option>
-            <option value="pt" class="flag-option">
-                <img src="https://restcountries.com/data/bra.svg" alt="Brazil Flag"> Português
-            </option>
-            <option value="ar" class="flag-option">
-                <img src="https://restcountries.com/data/egy.svg" alt="Egypt Flag"> العربية
-            </option>
-            <option value="ru" class="flag-option">
-                <img src="https://restcountries.com/data/rus.svg" alt="Russia Flag"> Русский
-            </option>
-            <option value="hi" class="flag-option">
-                <img src="https://restcountries.com/data/ind.svg" alt="India Flag"> हिन्दी
-            </option>
-        </select>
+      <select onchange="changeLanguage(event)">
+        <option value="en" class="flag-option">
+          <img src="https://restcountries.com/data/usa.svg" alt="US Flag" />
+          English
+        </option>
+        <option value="es" class="flag-option">
+          <img src="https://restcountries.com/data/esp.svg" alt="Spain Flag" />
+          Español
+        </option>
+        <option value="fr" class="flag-option">
+          <img src="https://restcountries.com/data/fra.svg" alt="France Flag" />
+          Français
+        </option>
+        <option value="zh" class="flag-option">
+          <img src="https://restcountries.com/data/chn.svg" alt="China Flag" />
+          中文
+        </option>
+        <option value="pt" class="flag-option">
+          <img src="https://restcountries.com/data/bra.svg" alt="Brazil Flag" />
+          Português
+        </option>
+        <option value="ar" class="flag-option">
+          <img src="https://restcountries.com/data/egy.svg" alt="Egypt Flag" />
+          العربية
+        </option>
+        <option value="ru" class="flag-option">
+          <img src="https://restcountries.com/data/rus.svg" alt="Russia Flag" />
+          Русский
+        </option>
+        <option value="hi" class="flag-option">
+          <img src="https://restcountries.com/data/ind.svg" alt="India Flag" />
+          हिन्दी
+        </option>
+      </select>
     </div>
 
     <!-- Reference Number Entry -->
     <div id="refNumberInput">
-        <h1 id="greeting">Hello!</h1>
-        <label for="refNumber" id="refNumberLabel">Enter reference number:</label>
-        <input type="text" id="refNumber" placeholder="0000" maxlength="4" pattern="\d{4}" required>
-        <button onclick="startSession()">→</button>
+      <h1 id="greeting">Hello!</h1>
+      <label for="refNumber" id="refNumberLabel">Enter reference number:</label>
+      <input
+        type="text"
+        id="refNumber"
+        placeholder="0000"
+        maxlength="4"
+        pattern="\d{4}"
+        required
+      />
+      <button onclick="startSession()">→</button>
     </div>
 
     <!-- Camera Permission and Face Capture -->
-    <div id="cameraPermission" style="display: none;">
-        <h2 id="faceScanTitle">Face Scan Required</h2>
-        <p id="faceScanPrompt">Please position your face in front of the camera.</p>
-        <video id="cameraFeed" autoplay playsinline></video>
-        <button onclick="captureFace()" id="takePhotoButton">Take Photo</button>
+    <div id="cameraPermission" style="display: none">
+      <h2 id="faceScanTitle">Face Scan Required</h2>
+      <p id="faceScanPrompt">
+        Please position your face in front of the camera.
+      </p>
+      <video id="cameraFeed" autoplay playsinline></video>
+      <button onclick="captureFace()" id="takePhotoButton">Take Photo</button>
     </div>
 
     <!-- Loading Screen -->
-    <div id="loadingScreen" style="display: none;">
-        <h2 id="loadingMessage">Please stand still, you are being scanned by LiDAR scanners...</h2>
-        <div class="loading-spinner"></div>
+    <div id="loadingScreen" style="display: none">
+      <h2 id="loadingMessage">
+        Please stand still, you are being scanned by LiDAR scanners...
+      </h2>
+      <div class="loading-spinner"></div>
     </div>
 
     <!-- Main Content -->
-    <div id="container" style="display: none;">
-        <div id="model-view">
-            <h2 id="modelTitle">Your 3D Model</h2>
-            <div id="modelDisplay">
-                <!-- 3D Model Canvas -->
-                <canvas id="3dModelCanvas"></canvas>
-            </div>
+    <div id="container" style="display: none">
+      <div id="model-view">
+        <h2 id="modelTitle">Your 3D Model</h2>
+        <div id="modelDisplay">
+          <!-- 3D Model Canvas -->
+          <canvas id="3dModelCanvas"></canvas>
         </div>
-        <div id="cart-list">
-            <h2 id="cartTitle">Your Scanned Items</h2>
-            <div id="cartItems">
-                <p>No items scanned yet.</p>
-            </div>
-            <button id="finishSessionButton" onclick="finishSession()">Finish Session</button>
+      </div>
+      <div id="cart-list">
+        <h2 id="cartTitle">Your Scanned Items</h2>
+        <div id="cartItems">
+          <p>No items scanned yet.</p>
         </div>
+        <button id="finishSessionButton" onclick="finishSession()">
+          Finish Session
+        </button>
+      </div>
     </div>
 
     <script src="script.js"></script>
-</body>
+
+  </body>
 </html>
