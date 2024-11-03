@@ -3,167 +3,78 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Virtual Fitting Room</title>
-    <style>
-        /* Basic styling */
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-        }
-        #ref-screen, #main-container {
-            display: none;
-            flex-direction: column;
-            align-items: center;
-        }
-        #main-container {
-            display: flex;
-            height: 90vh;
-            width: 90vw;
-        }
-        #3d-model-view {
-            flex: 2;
-            padding: 20px;
-            text-align: center;
-        }
-        #cart-list, #selected-items-view {
-            flex: 1;
-            padding: 20px;
-            border-left: 1px solid #ccc;
-            position: relative;
-            display: none;
-        }
-        #cart-list.active, #selected-items-view.active {
-            display: block;
-        }
-        #cart-list h2, #selected-items-view h2 {
-            margin: 0;
-        }
-        .error {
-            color: red;
-            font-size: 0.9em;
-        }
-        .cart-item {
-            display: flex;
-            align-items: center;
-            margin-top: 10px;
-        }
-        .cart-item label {
-            flex: 1;
-        }
-        .description {
-            font-size: 0.9em;
-            color: #555;
-        }
-        #cart-toggle, .close-button {
-            cursor: pointer;
-            font-size: 20px;
-            position: absolute;
-            top: 10px;
-            right: 10px;
-        }
-    </style>
+    <title>Fit-Happens Virtual Fitting Room</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <h1>Fit-Happens Virtual Fitting Room</h1>
+
+    <!-- Reference Number Entry -->
+    <div id="refNumberInput">
+        <label for="refNumber">Enter your reference number:</label>
+        <input type="text" id="refNumber" placeholder="Enter reference number" maxlength="6">
+        <button onclick="startSession()">Start Session</button>
+    </div>
+
+    <!-- Main Content -->
+    <div id="container" style="display: none;">
+        <!-- 3D Model Display Area -->
+        <div id="model-view">
+            <h2>Your 3D Model</h2>
+            <div id="modelDisplay"> <!-- Placeholder for 3D model -->
+                <p>[3D model will appear here]</p>
+            </div>
+            <button onclick="capture3DModel()">Capture 3D Model</button>
+        </div>
+
+        <!-- Cart with Scanned Items -->
+        <div id="cart-list">
+            <h2>Your Scanned Items</h2>
+            <div id="cartItems"> <!-- Placeholder for items list -->
+                <p>No items scanned yet.</p>
+            </div>
+            <button onclick="finishSession()">Finish Session</button>
+        </div>
+    </div>
+
     <script>
-        function validateRefNumber() {
-            const refNumber = document.getElementById('ref-number').value;
-            const error = document.getElementById('ref-error');
-            if (/^\d{3}$/.test(refNumber)) {
-                error.textContent = '';
-                document.getElementById('ref-screen').style.display = 'none';
-                document.getElementById('main-container').style.display = 'flex';
-                document.getElementById('cart-list').classList.add('active');
+        // Function to start the session
+        function startSession() {
+            const refNumber = document.getElementById('refNumber').value;
+            if (refNumber) {
+                document.getElementById('refNumberInput').style.display = 'none';
+                document.getElementById('container').style.display = 'flex';
+                loadCartItems(refNumber);
             } else {
-                error.textContent = 'Enter a valid reference number';
+                alert('Please enter a valid reference number.');
             }
         }
 
-        function toggleCartView() {
-            const cartList = document.getElementById('cart-list');
-            const selectedItemsView = document.getElementById('selected-items-view');
-            cartList.classList.toggle('active');
-            selectedItemsView.classList.toggle('active');
-            update3DModel();
+        // Function to load scanned items into cart
+        function loadCartItems(refNumber) {
+            // Placeholder for loading logic; replace with API call if needed
+            const cartItems = document.getElementById('cartItems');
+            cartItems.innerHTML = `
+                <div class="cart-item">T-Shirt - Size M</div>
+                <div class="cart-item">Jeans - Size 32</div>
+                <div class="cart-item">Hat - One Size</div>
+            `;
         }
 
-        function update3DModel() {
-            const selectedItemsContainer = document.getElementById('selected-items');
-            selectedItemsContainer.innerHTML = '';
-            const checkboxes = document.querySelectorAll('.cart-item input[type="checkbox"]');
-            checkboxes.forEach(checkbox => {
-                if (checkbox.checked) {
-                    const itemLabel = checkbox.parentElement.querySelector('label').innerText;
-                    const description = checkbox.parentElement.querySelector('.description').innerText;
-                    const selectedItem = document.createElement('div');
-                    selectedItem.innerHTML = `<strong>${itemLabel}</strong><br><span>${description}</span>`;
-                    selectedItemsContainer.appendChild(selectedItem);
-                }
-            });
+        // Function for capturing 3D model
+        function capture3DModel() {
+            const modelDisplay = document.getElementById('modelDisplay');
+            modelDisplay.innerHTML = '<p>[3D model captured]</p>';
+            // Replace with actual 3D capture functionality
+        }
+
+        // Function to finish session
+        function finishSession() {
+            alert('Thank you for using the Virtual Fitting Room! Your session is now complete.');
+            document.getElementById('container').style.display = 'none';
+            document.getElementById('refNumberInput').style.display = 'flex';
+            document.getElementById('refNumber').value = '';
         }
     </script>
-</head>
-<body>
-
-<!-- Reference number input screen -->
-<div id="ref-screen" style="display: flex;">
-    <h2>Enter Your Reference Number</h2>
-    <input type="text" id="ref-number" maxlength="3" placeholder="###" required>
-    <button onclick="validateRefNumber()">Submit</button>
-    <div id="ref-error" class="error"></div>
-</div>
-
-<!-- Main container with 3D model and cart list -->
-<div id="main-container">
-    <!-- 3D model view on the left -->
-    <div id="3d-model-view">
-        <h2>Your 3D Model</h2>
-        <div id="model">
-            <!-- Placeholder for the 3D model -->
-            <p>[3D Model Display]</p>
-        </div>
-    </div>
-
-    <!-- Cart list on the right -->
-    <div id="cart-list" class="active">
-        <h2>Cart List</h2>
-        <span class="close-button" onclick="toggleCartView()">x</span>
-        <div class="cart-item">
-            <input type="checkbox" onclick="update3DModel()">
-            <label>Item 1</label>
-            <div class="description">Color: Red, Size: M</div>
-        </div>
-        <div class="cart-item">
-            <input type="checkbox" onclick="update3DModel()">
-            <label>Item 2</label>
-            <div class="description">Color: Blue, Size: L</div>
-        </div>
-        <div class="cart-item">
-            <input type="checkbox" onclick="update3DModel()">
-            <label>Item 3</label>
-            <div class="description">Color: Green, Size: S</div>
-        </div>
-    </div>
-
-    <!-- Selected items view -->
-    <div id="selected-items-view">
-        <h2>Selected Items</h2>
-        <div id="selected-items">
-            <!-- Selected items with descriptions will be displayed here -->
-        </div>
-        <div id="model-selected">
-            <!-- Placeholder for the 3D model with selected items -->
-            <p>[3D Model Display with Selected Items]</p>
-        </div>
-        <span id="cart-toggle" onclick="toggleCartView()">&#x1F6D2;</span>
-    </div>
-</div>
-
-<script>
-    // Show the reference input screen initially
-    document.getElementById('ref-screen').style.display = 'flex';
-</script>
-
 </body>
 </html>
