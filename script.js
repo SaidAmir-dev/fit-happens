@@ -1,5 +1,10 @@
 let videoStream;
 let currentLanguage = 'en';
+let refNumber;
+let scene, camera, renderer;
+let baseModel;
+let clothingModels = {};
+let modelGroup = new THREE.Group();
 
 const translations = {
     en: {
@@ -13,7 +18,12 @@ const translations = {
         captureModelButton: "Capture 3D Model",
         finishSessionButton: "Finish Session",
         takePhotoButton: "Take Photo",
-        finishSessionMessage: "Thank you for using the Virtual Fitting Room! Your session is now complete."
+        finishSessionMessage: "Thank you for using the Virtual Fitting Room! Your session is now complete.",
+        items: {
+            item1: "T-Shirt - Size M",
+            item2: "Jeans - Size 32",
+            item3: "Hat - One Size"
+        }
     },
     es: {
         greeting: "¡Hola!",
@@ -26,7 +36,12 @@ const translations = {
         captureModelButton: "Capturar modelo 3D",
         finishSessionButton: "Finalizar sesión",
         takePhotoButton: "Tomar foto",
-        finishSessionMessage: "¡Gracias por usar el probador virtual! Su sesión ha terminado."
+        finishSessionMessage: "¡Gracias por usar el probador virtual! Su sesión ha terminado.",
+        items: {
+            item1: "Camiseta - Talla M",
+            item2: "Vaqueros - Talla 32",
+            item3: "Sombrero - Talla Única"
+        }
     },
     fr: {
         greeting: "Bonjour!",
@@ -39,7 +54,12 @@ const translations = {
         captureModelButton: "Capturer le modèle 3D",
         finishSessionButton: "Terminer la session",
         takePhotoButton: "Prendre une photo",
-        finishSessionMessage: "Merci d'avoir utilisé le cabines virtuelles ! Votre session est maintenant terminée."
+        finishSessionMessage: "Merci d'avoir utilisé le cabines virtuelles ! Votre session est maintenant terminée.",
+        items: {
+            item1: "T-shirt - Taille M",
+            item2: "Jean - Taille 32",
+            item3: "Chapeau - Taille Unique"
+        }
     },
     zh: {
         greeting: "你好！",
@@ -52,7 +72,12 @@ const translations = {
         captureModelButton: "捕获3D模型",
         finishSessionButton: "完成会话",
         takePhotoButton: "拍照",
-        finishSessionMessage: "感谢您使用虚拟试衣间！您的会话已完成。"
+        finishSessionMessage: "感谢您使用虚拟试衣间！您的会话已完成。",
+        items: {
+            item1: "T恤 - 尺码 M",
+            item2: "牛仔裤 - 尺码 32",
+            item3: "帽子 - 均码"
+        }
     },
     pt: {
         greeting: "Olá!",
@@ -65,7 +90,12 @@ const translations = {
         captureModelButton: "Capturar modelo 3D",
         finishSessionButton: "Finalizar sessão",
         takePhotoButton: "Tirar foto",
-        finishSessionMessage: "Obrigado por usar o Vestiário Virtual! Sua sessão está agora completa."
+        finishSessionMessage: "Obrigado por usar o Vestiário Virtual! Sua sessão está agora completa.",
+        items: {
+            item1: "Camiseta - Tamanho M",
+            item2: "Jeans - Tamanho 32",
+            item3: "Chapéu - Tamanho Único"
+        }
     },
     ar: {
         greeting: "مرحبا!",
@@ -78,7 +108,12 @@ const translations = {
         captureModelButton: "التقاط نموذج ثلاثي الأبعاد",
         finishSessionButton: "إنهاء الجلسة",
         takePhotoButton: "التقاط الصورة",
-        finishSessionMessage: "شكرًا لاستخدامك غرفة القياس الافتراضية! تم الآن إنهاء جلستك."
+        finishSessionMessage: "شكرًا لاستخدامك غرفة القياس الافتراضية! تم الآن إنهاء جلستك.",
+        items: {
+            item1: "قميص - المقاس M",
+            item2: "جينز - المقاس 32",
+            item3: "قبعة - مقاس واحد"
+        }
     },
     ru: {
         greeting: "Здравствуйте!",
@@ -91,7 +126,12 @@ const translations = {
         captureModelButton: "Сохранить 3D модель",
         finishSessionButton: "Завершить сессию",
         takePhotoButton: "Сделать фото",
-        finishSessionMessage: "Спасибо за использование виртуальной примерочной! Ваша сессия завершена."
+        finishSessionMessage: "Спасибо за использование виртуальной примерочной! Ваша сессия завершена.",
+        items: {
+            item1: "Футболка - Размер M",
+            item2: "Джинсы - Размер 32",
+            item3: "Шляпа - Один размер"
+        }
     },
     hi: {
         greeting: "नमस्ते!",
@@ -104,13 +144,24 @@ const translations = {
         captureModelButton: "3D मॉडल कैप्चर करें",
         finishSessionButton: "सत्र समाप्त करें",
         takePhotoButton: "फोटो लें",
-        finishSessionMessage: "वर्चुअल फिटिंग रूम का उपयोग करने के लिए धन्यवाद! आपका सत्र अब समाप्त हो गया है।"
+        finishSessionMessage: "वर्चुअल फिटिंग रूम का उपयोग करने के लिए धन्यवाद! आपका सत्र अब समाप्त हो गया है।",
+        items: {
+            item1: "टी-शर्ट - साइज़ M",
+            item2: "जींस - साइज़ 32",
+            item3: "टोपी - एक साइज़"
+        }
     }
 };
 
 function changeLanguage(event) {
     currentLanguage = event.target.value;
+    localStorage.setItem('currentLanguage', currentLanguage)
     updateText();
+
+    //Reload cart items with new language if cart is visible
+    if (document.getElementById('container').style.display !== 'none') {
+        loadCartItems(refNumber);
+    }
 }
 
 function updateText() {
@@ -133,8 +184,15 @@ function updateText() {
     if (takePhotoButton) {
         takePhotoButton.innerText = translations[currentLanguage].takePhotoButton;
     }
-
 }
+
+window.onload = function() {
+    if (localStorage.getItem('currentLanguage')) {
+        currentLanguage = localStorage.getItem('currentLanguage');
+        document.getElementById('languageSelector').value = currentLanguage
+    }
+    updateText();
+};
 
 async function startSession() {
     refNumber = document.getElementById('refNumber').value;
@@ -213,12 +271,12 @@ function finishSession() {
 // Initialize the 3D model display
 function init3DModel() {
     const canvas = document.getElementById("3dModelCanvas");
-    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+    renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
     renderer.setSize(canvas.clientWidth, canvas.clientHeight);
 
     // Scene and camera setup
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(50, canvas.clientWidth / canvas.clientHeight, 0.1, 1000);
+    scene = new THREE.Scene();
+    camera = new THREE.PerspectiveCamera(50, canvas.clientWidth / canvas.clientHeight, 0.1, 1000);
     camera.position.z = 5;
 
     // Basic lighting
@@ -267,9 +325,9 @@ function captureFace() {
 function loadCartItems(refNumber) {
     // Sample items; replace with actual data loading logic if needed
     const items = [
-        { name: "T-Shirt - Size M", id: "item1" },
-        { name: "Jeans - Size 32", id: "item2" },
-        { name: "Hat - One Size", id: "item3" }
+        { id: "item1" },
+        { id: "item2" },
+        { id: "item3" }
     ];
 
     const cartItems = document.getElementById('cartItems');
@@ -283,12 +341,12 @@ function loadCartItems(refNumber) {
         const checkbox = document.createElement('input');
         checkbox.type = 'checkbox';
         checkbox.id = item.id;
-        checkbox.value = item.name;
-        checkbox.onchange = () => toggleItemOnModel(item.name, checkbox.checked);
+        checkbox.value = item.id;
+        checkbox.onchange = () => toggleItemOnModel(item.id, checkbox.checked);
 
         const label = document.createElement('label');
         label.htmlFor = item.id;
-        label.innerText = item.name;
+        label.innerText = translations[currentLanguage].items[item.id];
 
         itemDiv.appendChild(checkbox);
         itemDiv.appendChild(label);
