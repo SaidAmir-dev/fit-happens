@@ -39,7 +39,39 @@
         }
 
         #refNumberInput button:hover {
-            background-color: #333; /* Darker black on hover */
+            background-color: #333;
+        }
+
+        /* Centered camera permission box */
+        #cameraPermission {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 50%; /* Smaller width */
+            margin: auto;
+            padding: 20px;
+            border: 2px solid black;
+            border-radius: 10px;
+            background-color: #f0f0f0;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        /* Center the Take Photo button */
+        #cameraPermission button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 1.2em;
+            cursor: pointer;
+            background-color: black;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+
+        #cameraPermission button:hover {
+            background-color: #333;
         }
     </style>
 </head>
@@ -57,13 +89,13 @@
         <h2>Face Scan Required</h2>
         <p>Please position your face in front of the camera.</p>
         <video id="cameraFeed" autoplay playsinline></video>
-        <button onclick="captureFace()">Capture Face</button>
+        <button onclick="captureFace()">Take Photo</button>
     </div>
 
     <!-- Loading Screen -->
     <div id="loadingScreen" style="display: none;">
         <h2>Please stand still, you are being scanned by LiDAR scanners...</h2>
-        <div class="loading-spinner"></div> <!-- Loading spinner -->
+        <div class="loading-spinner"></div>
     </div>
 
     <!-- Main Content -->
@@ -90,7 +122,6 @@
     <script>
         let videoStream;
 
-        // Function to start the session
         function startSession() {
             const refNumber = document.getElementById('refNumber').value;
             if (/^\d{4}$/.test(refNumber)) {
@@ -101,15 +132,12 @@
             }
         }
 
-        // Request camera permission and display the video feed
         function requestCameraPermission() {
             const cameraPermissionDiv = document.getElementById('cameraPermission');
             const cameraFeed = document.getElementById('cameraFeed');
 
-            // Show the camera permission window
             cameraPermissionDiv.style.display = 'block';
 
-            // Request video stream from the camera
             navigator.mediaDevices.getUserMedia({ video: true })
                 .then(stream => {
                     videoStream = stream;
@@ -121,28 +149,22 @@
                 });
         }
 
-        // Capture face and proceed to fitting room
         function captureFace() {
-            // Stop the video stream after capturing
             if (videoStream) {
                 videoStream.getTracks().forEach(track => track.stop());
             }
 
-            // Hide the camera permission section and show the loading screen
             document.getElementById('cameraPermission').style.display = 'none';
             document.getElementById('loadingScreen').style.display = 'block';
 
-            // Show loading screen for 5 seconds before proceeding
             setTimeout(() => {
                 document.getElementById('loadingScreen').style.display = 'none';
                 document.getElementById('container').style.display = 'flex';
 
-                // Load items into the cart
                 loadCartItems();
             }, 5000);
         }
 
-        // Function to load scanned items into cart
         function loadCartItems() {
             const items = [
                 { name: "T-Shirt - Size M", id: "item1" },
@@ -151,7 +173,7 @@
             ];
 
             const cartItems = document.getElementById('cartItems');
-            cartItems.innerHTML = ''; // Clear previous items
+            cartItems.innerHTML = '';
 
             items.forEach(item => {
                 const itemDiv = document.createElement('div');
@@ -173,7 +195,6 @@
             });
         }
 
-        // Function to toggle items on the 3D model display
         function toggleItemOnModel(itemName, isChecked) {
             const modelDisplay = document.getElementById('modelDisplay');
             let currentModelItems = modelDisplay.getElementsByClassName('model-item');
@@ -190,13 +211,11 @@
             }
         }
 
-        // Function for capturing 3D model
         function capture3DModel() {
             const modelDisplay = document.getElementById('modelDisplay');
             modelDisplay.innerHTML = '<p>[3D model captured]</p>';
         }
 
-        // Function to finish session
         function finishSession() {
             alert('Thank you for using the Virtual Fitting Room! Your session is now complete.');
             document.getElementById('container').style.display = 'none';
