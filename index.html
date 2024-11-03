@@ -8,8 +8,12 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 </head>
 <body>
+    <div id="backButton" onclick="goBack()">
+        ←
+    </div>
     <!-- Language Selector -->
     <div id="languageSelector">
         <select onchange="changeLanguage(event)">
@@ -67,9 +71,9 @@
         <div id="model-view">
             <h2 id="modelTitle">Your 3D Model</h2>
             <div id="modelDisplay">
-                <p>[3D model will appear here]</p>
+                <!-- 3D Model Canvas -->
+                <canvas id="3dModelCanvas"></canvas>
             </div>
-            <button id="captureModelButton" onclick="capture3DModel()">Capture 3D Model</button>
         </div>
         <div id="cart-list">
             <h2 id="cartTitle">Your Scanned Items</h2>

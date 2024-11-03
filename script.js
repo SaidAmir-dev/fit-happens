@@ -165,3 +165,101 @@ function capture3DModel() {
 function finishSession() {
     alert(translations[currentLanguage].finishSessionMessage);
 }
+
+
+// Initialize the 3D model display
+function init3DModel() {
+    const canvas = document.getElementById("3dModelCanvas");
+    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+    renderer.setSize(canvas.clientWidth, canvas.clientHeight);
+
+    // Scene and camera setup
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(50, canvas.clientWidth / canvas.clientHeight, 0.1, 1000);
+    camera.position.z = 5;
+
+    // Basic lighting
+    const ambientLight = new THREE.AmbientLight(0x404040, 2); // soft white light
+    const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+    directionalLight.position.set(1, 1, 1).normalize();
+    scene.add(ambientLight);
+    scene.add(directionalLight);
+
+    // Basic 3D model
+    const geometry = new THREE.CylinderGeometry(0.5, 0.5, 2, 32);
+    const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+    const body = new THREE.Mesh(geometry, material);
+    scene.add(body);
+
+    const headGeometry = new THREE.SphereGeometry(0.5, 32, 32);
+    const head = new THREE.Mesh(headGeometry, material);
+    head.position.y = 1.5;
+    scene.add(head);
+
+    // Render loop
+    function animate() {
+        requestAnimationFrame(animate);
+        body.rotation.y += 0.01;
+        head.rotation.y += 0.01;
+        renderer.render(scene, camera);
+    }
+    animate();
+}
+
+// Call the init3DModel function when the model view is displayed
+function captureFace() {
+    document.getElementById('cameraPermission').style.display = 'none';
+    document.getElementById('loadingScreen').style.display = 'block';
+
+    setTimeout(() => {
+        document.getElementById('loadingScreen').style.display = 'none';
+        document.getElementById('container').style.display = 'contents';
+        init3DModel();  // Initialize the 3D model display
+        loadCartItems(refNumber);  // Load scanned items into cart
+    }, 3000);
+}
+
+
+// Function to load scanned items into cart
+function loadCartItems(refNumber) {
+    // Sample items; replace with actual data loading logic if needed
+    const items = [
+        { name: "T-Shirt - Size M", id: "item1" },
+        { name: "Jeans - Size 32", id: "item2" },
+        { name: "Hat - One Size", id: "item3" }
+    ];
+
+    const cartItems = document.getElementById('cartItems');
+    cartItems.innerHTML = ''; // Clear previous items
+
+    // Populate cart items with checkboxes
+    items.forEach(item => {
+        const itemDiv = document.createElement('div');
+        itemDiv.classList.add('cart-item');
+
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.id = item.id;
+        checkbox.value = item.name;
+        checkbox.onchange = () => toggleItemOnModel(item.name, checkbox.checked);
+
+        const label = document.createElement('label');
+        label.htmlFor = item.id;
+        label.innerText = item.name;
+
+        itemDiv.appendChild(checkbox);
+        itemDiv.appendChild(label);
+        cartItems.appendChild(itemDiv);
+    });
+}
+
+function goBack() {
+    // Determine the current visible section and show the previous one
+    if (document.getElementById('container').style.display === 'contents') {
+        document.getElementById('container').style.display = 'none';
+        document.getElementById('cameraPermission').style.display = 'flex';
+    } else if (document.getElementById('cameraPermission').style.display === 'flex') {
+        document.getElementById('cameraPermission').style.display = 'none';
+        document.getElementById('refNumberInput').style.display = 'flex';
+    }
+}
