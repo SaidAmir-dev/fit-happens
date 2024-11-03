@@ -1,12 +1,28 @@
 body {
-    font-family: Arial, sans-serif;
+    font-family: "Open Sans", sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    background-color: #ffffff;
+}
+
+#refNumberInput {
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin: 0;
-    padding: 20px;
-    background-color: #f0f0f5;
-    color: #333;
+    text-align: center;
+}
+
+h1 {
+    font-size: 3em;
+    margin-bottom: 20px;
+}
+
+label {
+    font-size: 1.5em;
+    margin-bottom: 10px;
 }
 
 #container {
@@ -59,8 +75,12 @@ button:hover {
 }
 
 input[type="text"] {
-    padding: 10px;
-    margin: 10px 0;
-    border: 1px solid #ccc;
-    border-radius: 5px;
+    width: 200px;
+    height: 40px;
+    font-size: 1.2em;
+    text-align: center;
+    border: 2px solid #000;
+    border-radius: 25px;
+    outline: none;
+    margin-bottom: 20px;
 }
